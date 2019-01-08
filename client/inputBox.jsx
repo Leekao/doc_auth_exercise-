@@ -3,7 +3,7 @@ import { Component } from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import React, { memo, useState, useEffect, useCallback } from 'react'
 
-const SignatureBox = ({owner, value, _id}) => {
+const SignatureBox = ({document_id, assigned_to, owner, value, _id}) => {
   const [isActive, setActive] = useState(false)
   const [popup, setPopup] = useState(false)
   let saveFunction = null
@@ -63,6 +63,25 @@ const SignatureBox = ({owner, value, _id}) => {
       return
     },0)
   }
+  let signers = []
+  if (!assigned_to) {
+    signers = Tokens
+    .find({document_id})
+    .map((t) => {
+      return (
+        <div key={t._id} 
+             className='assignable_signer'
+             onClick={(e) => {
+               InputBoxs.update(_id, {
+                 $set: {
+                  assigned_to: t._id
+                 }
+               })
+             }}
+             >{t.name}</div>
+      )
+    })
+  }
   return (
     <div onClick={(e) => {
       if (owner) {
@@ -71,7 +90,14 @@ const SignatureBox = ({owner, value, _id}) => {
       }
       if (!isActive)
         setActive(true)
-    }} className='signature_box'>
+    }} className={`signature_box assignable-${!assigned_to}`}>
+    {!assigned_to && (
+      <div className="assignable_signers"
+           onClick={(e) => {
+             e.stopPropagation()
+           }}
+      >{signers} </div>
+    )}
     {value && (
       <img src={value} className='value' />
     )}
@@ -103,7 +129,7 @@ const InputDetails = () => {
 
 }
  
-export default InputBox = ({owner, size, type, value, position, _id}) => {
+export default InputBox = ({document_id, owner, size, type, value, position, _id}) => {
   let input
   const style = {
     left: position[0],
@@ -113,7 +139,7 @@ export default InputBox = ({owner, size, type, value, position, _id}) => {
   }
   switch (type) {
     case "signature":
-      input = (<SignatureBox _id={_id} owner={owner} value={value} />)
+      input = (<SignatureBox _id={_id} document_id={document_id} owner={owner} value={value} />)
       break;
   }
   return (

@@ -7,6 +7,7 @@ this.InputBoxs = new Mongo.Collection('inputboxs')
 this.Chat = new Mongo.Collection('chat')
 this.Tokens = new Mongo.Collection('tokens')
 this.Requirements = new Mongo.Collection('requirements')
+this.Templates = new Mongo.Collection('templates')
 
 import SharedDocument from './document'
 import Chatbox from './chatbox'

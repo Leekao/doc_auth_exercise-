@@ -98,6 +98,7 @@ export default SessionManager = ({doc, add_input}) => {
   const tokens = Tokens.find({document_id}).fetch()
   const inputs = InputBoxs.find({document_id}).fetch()
   const res_rq = Requirements.find({document_id}).fetch()
+  const templates = Templates.find().fetch()
   let signer_boxs = []
   useEffect( () => {
     let p = 0
@@ -127,7 +128,9 @@ export default SessionManager = ({doc, add_input}) => {
   const style= {
     width: progress+'%'
   }
-  const done = (doc.tokens.length > 0) && (signer_boxs.length === 0)
+  const done = (doc.tokens)
+    ? (doc.tokens.length > 0) && (signer_boxs.length === 0)
+    : false
   return (
     <div className='session_manager'>
       <div className='steps_container'>
@@ -149,7 +152,7 @@ export default SessionManager = ({doc, add_input}) => {
           <div className="from">
             From Template
             <select> 
-              <option> default</option>
+              <option>default</option>
             </select>
           </div>
           <div className="from">
@@ -158,7 +161,7 @@ export default SessionManager = ({doc, add_input}) => {
           <div className="from">
             From History
             <select> 
-              <option> default</option>
+              <option>default</option>
             </select>
           </div>
         </div>
@@ -251,17 +254,6 @@ export const ButtonsContainer = ({document_id, add_input}) => {
       <div className='buttons_container'
            onClick={e => (isPressed===true) ? setPressed(false) : setPressed(true)}
         >
-        <div className='add_signature' 
-             onClick={e => (type === 'signature') ? setType(null) : setType('signature')}
-          >
-          ADD SIGNATURE
-        </div>
-        <div className='add_stamp' onClick={(e) => { setType('stamp') }}>
-          ADD STAMP 
-         </div>
-        <div className='add_textarea' onClick={(e) => { setType('text') }}> 
-          ADD TEXT
-        </div>
         <div className='add_signer' onClick={(e) => {
           e.stopPropagation()
           const new_token = Tokens.insert({ document_id, name: `Signer${doc.tokens.length+1}`})
@@ -269,12 +261,24 @@ export const ButtonsContainer = ({document_id, add_input}) => {
         }}>
           ADD SIGNER
         </div>
+        <div className='add_signature' 
+             onClick={e => (type === 'signature') ? setType(null) : setType('signature')}
+          >
+        <i className="fas fa-signature"></i> Signature
+        </div>
+        <div className='add_stamp' onClick={(e) => { setType('stamp') }}>
+        <i className="fas fa-stamp"></i> Stamp
+         </div>
+        <div className='add_textarea' onClick={(e) => { setType('text') }}> 
+        <i className="fas fa-font"></i>
+          Text
+        </div>
         <div className='add_requirement' onClick={(e) => { 
           e.stopPropagation()
           const new_requirement = Requirements.insert({ document_id })
           Documents.update(document_id, { $push: {resource_requirements: new_requirement} })
          }}>
-          ADD RQUIREMENT 
+          ADD REQUIREMENT 
         </div>
       </div>
       {isPressed && (
