@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {memo, useState, useEffect, useCallback } from 'react'
 
 const UploadBase = ({doc, setProgress}) => {
-  const current_file = (doc.base_document) ? doc.base_document_filename : null
+  const current_file = (doc && doc.base_document) ? doc.base_document_filename : null
   return (
     <div className='upload_document'>
       {!current_file && (
@@ -12,7 +12,7 @@ const UploadBase = ({doc, setProgress}) => {
           setProgress(10)
           reader.onload = (e) => {
             setProgress(20)
-            if (doc.base_document)
+            if (doc && doc.base_document)
               Documents.update(doc._id, {
                 $set: {
                   base_document: e.target.result,
@@ -87,7 +87,7 @@ export const SignerBox = (token) => {
 }
 
 export default SessionManager = ({doc, add_input}) => {
-  const document_id = doc._id
+  const document_id = (doc) ? doc._id : null
   const default_step = (document_id) ? 1 : 0
   const [step, setStep] = useState(default_step)
   const [session_type, setType] = useState('online')
@@ -128,7 +128,7 @@ export default SessionManager = ({doc, add_input}) => {
   const style= {
     width: progress+'%'
   }
-  const done = (doc.tokens)
+  const done = (doc && doc.tokens)
     ? (doc.tokens.length > 0) && (signer_boxs.length === 0)
     : false
   return (

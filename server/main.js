@@ -37,15 +37,33 @@ Meteor.methods({
   }
 })
 
+Meteor.publish('document', (document_id)  => {
+  return [
+    Documents.find(document_id),
+    InputBoxs.find({document_id}),
+    Requirements.find({document_id}),
+  ]
+})
+
+
+Meteor.publish('', ()  => {
+  return [
+    Documents.find({owner_id: this.userId}),
+    Templates.find({owner_id: this.userId}),
+  ]
+})
+
 Meteor.publish('token', (token) => {
   const _token = Tokens.findOne(token)
   
-  if (_token)
+  if (_token) {
+    const {document_id} = _token
     return [
-      Documents.find(_token.document_id),
-      InputBoxs.find(_token.document_id),
-      Requirements.find(_token.document_id),
+      Documents.find({document_id}),
+      InputBoxs.find({document_id}),
+      Requirements.find({document_id}),
     ] 
+  }
 })
 
 InputBoxs.allow({

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import TrackerReact from 'meteor/ultimatejs:tracker-react';
 import InputBox from './inputBox'
 import {memo, useState, useEffect, useCallback } from 'react'
-import SessionManager from './session_manager'
 
 const add_input = (input) => {
   InputBoxs.insert(input)
@@ -90,7 +89,6 @@ export default class SharedDocument extends TrackerReact(Component) {
     const signers = Tokens.find({document_id: doc._id}).fetch().map( (e, i) => <Signer owner={owner} key={e._id} {...e} doc={doc} />)
     const resources = Requirements.find({document_id: doc._id}).fetch().map( (e, i) => <Requirement owner={owner} key={e._id} doc={doc} {...e} />)
     return ( <>
-      <SessionManager owner={owner} doc={doc} add_input={add_input} />
       <div className='session_container'>
         <div className='signers_container'> {signers} </div>
         <div id='document_container' className='document_container'>
