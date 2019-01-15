@@ -6,7 +6,6 @@ import App from './app.jsx';
 
 FlowRouter.route('/', {
   action(params) {
-    Meteor.subscribe(true)
     render(<App />, document.getElementById('render-target'));
   }
 })

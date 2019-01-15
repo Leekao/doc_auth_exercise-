@@ -68,12 +68,14 @@ export const SignerBox = (token) => {
              >Phone</div>
       </div>
       <div className='details'>
-        {type=='email' && (
-          <input type='email' value={data} onChange={(e) => setData(e.currentTarget.value)} />
-        )}
-        {type=='phone' && (
-          <input type='phone' value={data} onChange={(e) => setData(e.currentTarget.value)} />
-        )}
+        {type=='email' && ( <>
+         Email: <input type='email' placeholder='email' value={data} onChange={(e) => setData(e.currentTarget.value)} />
+        </>)}
+        {type=='phone' && ( <>
+         Phone: <input type='phone' placeholder='phone' value={data} onChange={(e) => setData(e.currentTarget.value)} />
+        </>)}
+        <br/>
+        Identify as: <input type='text' placeholder='Signer Name' value={data} onChange={(e) => setData(e.currentTarget.value)} />
       </div>
       <div onClick={()=> {
         Tokens.update(token._id, {
@@ -81,12 +83,66 @@ export const SignerBox = (token) => {
             type, data, valid: true, ready_to_lock: false, online: false 
           }
         })
-      }} className='submit'> Submit</div>
+      }} className='submit'>Save</div>
     </div>
   )
 }
 
-export default SessionManager = ({doc, add_input}) => {
+const WorkflowManager = ({tokens}) => {
+  const initial_workflow = tokens.map( t => [t])
+  const [workflow, setWorkflow] = useState(initial_workflow)
+  let current_step = null
+  let dragged_token = null
+  let dragged_step = null
+
+  const onDragStart = (e, ti, si) => {
+    dragged_token = ti
+    dragged_step = si
+    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData('text/html', e.target.parentNode)
+  }
+  const onDragOver = si => {
+    current_step = si
+  }
+  const onDragEnd = () => {
+    const new_workflow = workflow.map(step_array => step_array.slice())
+    const token = {...workflow[dragged_step][dragged_token]}
+    delete new_workflow[dragged_step][dragged_token]
+    new_workflow[current_step].push(token)
+    //const clean_workflow = new_workflow.filter(s => s.length === 0)
+    setWorkflow(new_workflow)
+    dragged_token = null
+    dragged_step = null
+  }
+  return (
+    <div className='workflow_container'>
+      <ul>
+      {workflow.map( (step, step_index) => {
+        return <li key={step_index} onDragOver={() => {
+          onDragOver(step_index)
+        }}>
+          {step.map((token, token_index) => {
+            if (!token) return
+            return (
+                <div draggable
+                  key={token._id}
+                  className='token'
+                  onDragStart={e => onDragStart(e, token_index, step_index)}
+                  onDragEnd={onDragEnd}
+                  > 
+                  {token.name}
+                </div>
+            )
+          })
+      }
+      </li>
+      })}
+      </ul>
+    </div>
+  )
+}
+
+export default SessionManager = ({doc, add_input, owner}) => {
   const document_id = (doc) ? doc._id : null
   const default_step = (document_id) ? 1 : 0
   const [step, setStep] = useState(default_step)
@@ -133,6 +189,7 @@ export default SessionManager = ({doc, add_input}) => {
     : false
   return (
     <div className='session_manager'>
+      <WorkflowManager tokens={tokens} />
       <div className='steps_container'>
         <div onClick={() => setStep(0)}
              className={`step selected-${step===0}`}

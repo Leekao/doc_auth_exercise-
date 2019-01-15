@@ -12,6 +12,11 @@ this.Templates = new Mongo.Collection('templates')
 import SharedDocument from './document'
 import Chatbox from './chatbox'
 import Login from './login'
+
+const add_input = (input) => {
+  InputBoxs.insert(input)
+}
+
  
 import SessionManager from './session_manager'
 
@@ -33,13 +38,12 @@ export default class App extends TrackerReact(Component){
     }
     if (document_id) {
       if (doc) {
-        console.log('got document')
         if (doc.owner_id == user._id) {
           console.log('user is owner')
           return (
             <div>
-              <SessionManager owner={edit} doc={doc} />
-              <SharedDocument document_id={document_id} />
+              <SessionManager add_input={add_input} owner={edit} doc={doc} />
+              <SharedDocument owner={edit} document_id={document_id} />
               <Chatbox/>
             </div>
           )

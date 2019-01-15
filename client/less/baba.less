@@ -5,6 +5,36 @@
   width: 400px;
 }
 
+.workflow_container {
+  position: absolute;
+  top: 50px;
+  width: 400px;
+  left: 25%;
+  right: 25%;
+  height: fit-content;
+  z-index: 9999;
+  background-color: #F2f2f2;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+      border: solid thin blue;
+      margin: 10px;
+      padding: 10px 20px;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      line-height: 1;
+      > div {
+        border: solid thin blue;
+        margin: 10px;
+        padding: 10px 20px;
+      }
+    }
+  }
+}
+
 .session_setup {
   display: flex;
   line-height: 40px;
@@ -39,7 +69,7 @@
       font-size: 14px;
       line-height: 28px;
       padding: 4px;
-      margin: 5px;
+      margin: 10px auto;
       border-radius: 25px;
     }
   }
@@ -274,6 +304,9 @@
   background-color: white;
   box-shadow: 2px 2px #888888;
   z-index: 101;
+  .submit {
+    width: 200px;
+  }
   .flexed > div {
     flex-grow: 1;
     font-size: 12px;
@@ -321,10 +354,11 @@
   position: relative;
   width: fit-content;
   margin: 0 auto;
+  padding-top: 20px;
 }
 .inputs_container {
   position: absolute;
-  top:0;
+  top:20px;
   right:0;
   left:0;
   bottom:0;
@@ -334,6 +368,16 @@
   border: solid thin red;
   position: absolute;
   > div {
+    .watermark {
+      opacity: 0.3;
+      font-size: 38px;
+      line-height: 100px;
+      display: none;
+    }
+    &:hover .watermark {
+      display: block;
+    }
+    cursor: pointer;
     position: absolute;
     top: 0;
     bottom: 0;

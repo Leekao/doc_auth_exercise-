@@ -3,10 +3,6 @@ import TrackerReact from 'meteor/ultimatejs:tracker-react';
 import InputBox from './inputBox'
 import {memo, useState, useEffect, useCallback } from 'react'
 
-const add_input = (input) => {
-  InputBoxs.insert(input)
-}
-
 const Requirement = (requirement) => {
   const tokens = Tokens.find({document_id:requirement.document_id}).fetch()
   const [mode, setMode] = useState(0)
@@ -81,7 +77,11 @@ const Signer = (token) => {
 export default class SharedDocument extends TrackerReact(Component) {
   render(){
     let doc = Documents.findOne()
-    let owner = (doc) ? (doc.owner_id === Meteor.userId()) : false
+    const owner = (this.props.owner) 
+      ? this.props.owner 
+      : (doc) 
+        ? (doc.owner_id === Meteor.userId()) 
+        : false
     if (!doc) {
       doc = {_id:null, base_document:null, tokens:[]}
     }

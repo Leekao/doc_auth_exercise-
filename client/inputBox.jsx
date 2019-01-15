@@ -64,6 +64,7 @@ const SignatureBox = ({document_id, assigned_to, owner, value, _id}) => {
     },0)
   }
   let signers = []
+  let assigned = null
   if (!assigned_to) {
     signers = Tokens
     .find({document_id})
@@ -81,6 +82,8 @@ const SignatureBox = ({document_id, assigned_to, owner, value, _id}) => {
              >{t.name}</div>
       )
     })
+  } else {
+    assigned = Tokens.findOne(assigned_to).name
   }
   return (
     <div onClick={(e) => {
@@ -97,6 +100,9 @@ const SignatureBox = ({document_id, assigned_to, owner, value, _id}) => {
              e.stopPropagation()
            }}
       >{signers} </div>
+    )}
+    {(assigned_to && !value) && (
+      <div className='watermark'> {assigned} </div>
     )}
     {value && (
       <img src={value} className='value' />
@@ -129,7 +135,7 @@ const InputDetails = () => {
 
 }
  
-export default InputBox = ({document_id, owner, size, type, value, position, _id}) => {
+export default InputBox = ({document_id, assigned_to, owner, size, type, value, position, _id}) => {
   let input
   const style = {
     left: position[0],
@@ -139,7 +145,7 @@ export default InputBox = ({document_id, owner, size, type, value, position, _id
   }
   switch (type) {
     case "signature":
-      input = (<SignatureBox _id={_id} document_id={document_id} owner={owner} value={value} />)
+      input = (<SignatureBox _id={_id} assigned_to={assigned_to} document_id={document_id} owner={owner} value={value} />)
       break;
   }
   return (
